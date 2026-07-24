@@ -17,45 +17,49 @@ const CLIENT_LOGOS = [
   { file: "cliente-12", name: "Adufu" },
 ];
 
-const BANK_LOGOS: { file: string; name: string; tone: "light" | "dark" }[] = [
-  { file: "banco-01", name: "Caixa", tone: "dark" },
-  { file: "banco-02", name: "Bradesco", tone: "dark" },
-  { file: "banco-03", name: "Sol Agora", tone: "light" },
-  { file: "banco-04", name: "Sicredi", tone: "dark" },
-  { file: "banco-05", name: "Solfácil", tone: "light" },
-  { file: "banco-06", name: "Banco do Brasil", tone: "light" },
-  { file: "banco-07", name: "BTG Pactual", tone: "light" },
-  { file: "banco-08", name: "Santander", tone: "dark" },
-  { file: "banco-09", name: "Solplace", tone: "dark" },
-  { file: "banco-10", name: "Sicoob", tone: "light" },
-  { file: "banco-11", name: "BV", tone: "light" },
-  { file: "banco-12", name: "Credsolaris", tone: "light" },
+const BANK_LOGOS: { file: string; name: string; needsChip?: boolean }[] = [
+  { file: "banco-01", name: "Caixa" },
+  { file: "banco-02", name: "Bradesco" },
+  { file: "banco-03", name: "Sol Agora", needsChip: true },
+  { file: "banco-04", name: "Sicredi" },
+  { file: "banco-05", name: "Solfácil", needsChip: true },
+  { file: "banco-06", name: "Banco do Brasil", needsChip: true },
+  { file: "banco-07", name: "BTG Pactual", needsChip: true },
+  { file: "banco-08", name: "Santander" },
+  { file: "banco-09", name: "Solplace" },
+  { file: "banco-10", name: "Sicoob", needsChip: true },
+  { file: "banco-11", name: "BV", needsChip: true },
+  { file: "banco-12", name: "Credsolaris", needsChip: true },
 ];
 
 function LogoTile({
   src,
   alt,
-  tone = "dark",
+  needsChip = false,
 }: {
   src: string;
   alt: string;
-  tone?: "light" | "dark";
+  needsChip?: boolean;
 }) {
+  const image = (
+    <Image
+      src={withBasePath(src)}
+      alt={alt}
+      width={200}
+      height={120}
+      className="h-full w-full object-contain"
+    />
+  );
+
   return (
-    <div
-      className={`flex h-20 items-center justify-center rounded-xl border p-3 ${
-        tone === "light"
-          ? "border-white/10 bg-offwhite-50"
-          : "border-white/10 bg-white/[0.03]"
-      }`}
-    >
-      <Image
-        src={withBasePath(src)}
-        alt={alt}
-        width={200}
-        height={120}
-        className="h-full w-full object-contain"
-      />
+    <div className="flex h-20 items-center justify-center rounded-xl border border-white/10 bg-white/[0.03] p-3">
+      {needsChip ? (
+        <div className="flex h-full w-full items-center justify-center rounded-md bg-offwhite-50 p-2">
+          {image}
+        </div>
+      ) : (
+        image
+      )}
     </div>
   );
 }
@@ -99,7 +103,7 @@ export function TrustPartners() {
                     key={logo.file}
                     src={`/brand/bancos/${logo.file}.png`}
                     alt={`Logo ${logo.name}`}
-                    tone={logo.tone}
+                    needsChip={logo.needsChip}
                   />
                 ))}
               </div>
