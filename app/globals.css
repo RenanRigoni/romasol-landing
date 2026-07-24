@@ -1,0 +1,107 @@
+@import "tailwindcss";
+
+:root {
+  --color-navy-950: #050b1f;
+  --color-navy-900: #0a1b4d;
+  --color-navy-800: #0d2464;
+  --color-royal-600: #0a47ff;
+  --color-royal-500: #2f63ff;
+  --color-royal-400: #5c82ff;
+  --color-solar-500: #f5b301;
+  --color-solar-400: #ffc01e;
+  --color-accent-red: #e0261f;
+  --color-offwhite-50: #f6f7fb;
+  --color-offwhite-100: #eef1f8;
+  --color-ink-900: #0b1220;
+  --color-slate-400: #8a93a6;
+  --color-slate-300: #b4bbcc;
+
+  --font-display: var(--font-sora);
+  --font-body: var(--font-inter);
+}
+
+@theme inline {
+  --color-navy-950: var(--color-navy-950);
+  --color-navy-900: var(--color-navy-900);
+  --color-navy-800: var(--color-navy-800);
+  --color-royal-600: var(--color-royal-600);
+  --color-royal-500: var(--color-royal-500);
+  --color-royal-400: var(--color-royal-400);
+  --color-solar-500: var(--color-solar-500);
+  --color-solar-400: var(--color-solar-400);
+  --color-accent-red: var(--color-accent-red);
+  --color-offwhite-50: var(--color-offwhite-50);
+  --color-offwhite-100: var(--color-offwhite-100);
+  --color-ink-900: var(--color-ink-900);
+  --color-slate-400: var(--color-slate-400);
+  --color-slate-300: var(--color-slate-300);
+
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
+}
+
+* {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    scroll-behavior: auto;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+body {
+  background: var(--color-navy-950);
+  color: var(--color-offwhite-50);
+  font-family: var(--font-body), system-ui, sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+.font-display {
+  font-family: var(--font-display), system-ui, sans-serif;
+}
+
+::selection {
+  background: var(--color-solar-500);
+  color: var(--color-navy-950);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-solar-500);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.input-base {
+  width: 100%;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: var(--color-navy-950);
+  color: var(--color-offwhite-50);
+  padding: 0.75rem 1rem;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.input-base:focus {
+  border-color: var(--color-solar-500);
+}
+
+.scrollbar-none {
+  scrollbar-width: none;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
