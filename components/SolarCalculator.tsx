@@ -44,7 +44,7 @@ export function SolarCalculator() {
     () => {
       if (!result) {
         hasRevealedRef.current = false;
-        if (flowLineRef.current) flowLineRef.current.style.width = "0%";
+        if (flowLineRef.current) flowLineRef.current.style.transform = "scaleX(0)";
         return;
       }
 
@@ -57,8 +57,8 @@ export function SolarCalculator() {
         if (flowLineRef.current) {
           gsap.fromTo(
             flowLineRef.current,
-            { width: "0%" },
-            { width: "100%", duration: 1.1, ease: "power2.out" },
+            { scaleX: 0 },
+            { scaleX: 1, duration: 1.1, ease: "power2.out" },
           );
         }
 
@@ -74,7 +74,7 @@ export function SolarCalculator() {
           },
         });
       } else {
-        if (flowLineRef.current) flowLineRef.current.style.width = "100%";
+        if (flowLineRef.current) flowLineRef.current.style.transform = "scaleX(1)";
         if (annualValueRef.current) {
           annualValueRef.current.textContent = formatCurrencyBRL(result.annualSavings);
         }
@@ -125,11 +125,11 @@ export function SolarCalculator() {
                     placeholder="600"
                     value={rawInput}
                     onChange={(event) => handleInputChange(event.target.value)}
-                    className="w-full bg-transparent font-display text-3xl font-semibold text-offwhite-50 outline-none placeholder:text-slate-700 sm:text-4xl"
+                    className="w-full bg-transparent font-display text-3xl font-semibold text-offwhite-50 outline-none placeholder:text-slate-500 sm:text-4xl"
                     aria-describedby="monthly-bill-hint"
                   />
                 </div>
-                <p id="monthly-bill-hint" className="mt-2 text-xs text-slate-500">
+                <p id="monthly-bill-hint" className="mt-2 text-xs text-slate-400">
                   Valor usado diretamente na fórmula de estimativa.
                 </p>
 
@@ -167,7 +167,7 @@ export function SolarCalculator() {
                       </option>
                     ))}
                   </select>
-                  <p className="mt-2 text-xs text-slate-500">
+                  <p className="mt-2 text-xs text-slate-400">
                     Não altera o cálculo, apenas ajuda a personalizar o atendimento.
                   </p>
                 </div>
@@ -178,21 +178,21 @@ export function SolarCalculator() {
 
                 <div className="relative">
                   <div className="flex items-center justify-between gap-2 text-[9px] font-semibold uppercase tracking-[0.08em] sm:text-[10px] sm:tracking-[0.15em]">
-                    <span className={`whitespace-nowrap ${result ? "text-solar-400" : "text-slate-600"}`}>
+                    <span className={`whitespace-nowrap ${result ? "text-solar-400" : "text-slate-400"}`}>
                       Conta atual
                     </span>
-                    <span className={`whitespace-nowrap ${result ? "text-solar-400" : "text-slate-600"}`}>
+                    <span className={`whitespace-nowrap ${result ? "text-solar-400" : "text-slate-400"}`}>
                       Sistema estimado
                     </span>
-                    <span className={`whitespace-nowrap ${result ? "text-solar-400" : "text-slate-600"}`}>
+                    <span className={`whitespace-nowrap ${result ? "text-solar-400" : "text-slate-400"}`}>
                       Economia
                     </span>
                   </div>
                   <div className="relative mt-2.5 h-px bg-white/10">
                     <div
                       ref={flowLineRef}
-                      className="absolute inset-y-0 left-0 bg-solar-500"
-                      style={{ width: "0%" }}
+                      className="absolute inset-y-0 left-0 w-full origin-left bg-solar-500"
+                      style={{ transform: "scaleX(0)" }}
                     />
                   </div>
 
@@ -212,7 +212,7 @@ export function SolarCalculator() {
                     </p>
                     <p
                       className={`mt-3 font-display text-4xl font-bold leading-none sm:text-5xl ${
-                        result ? "text-solar-400" : "text-slate-700"
+                        result ? "text-solar-400" : "text-slate-500"
                       }`}
                     >
                       <span ref={annualValueRef}>{result ? formatCurrencyBRL(0) : "—"}</span>
@@ -241,7 +241,7 @@ export function SolarCalculator() {
                       </Button>
 
                       <div>
-                        <p className="text-xs leading-relaxed text-slate-500">
+                        <p className="text-xs leading-relaxed text-slate-400">
                           Estimativa inicial. O dimensionamento definitivo depende de análise técnica.
                         </p>
                         <button
@@ -252,7 +252,7 @@ export function SolarCalculator() {
                           {isExplainOpen ? "Ocultar detalhes do cálculo" : "Entenda o cálculo"}
                         </button>
                         {isExplainOpen ? (
-                          <p className="mt-3 text-xs leading-relaxed text-slate-500">
+                          <p className="mt-3 text-xs leading-relaxed text-slate-400">
                             Estimativa baseada na tarifa média de energia e no potencial regional de
                             geração solar, com fator de economia conservador de 90% sobre o valor da
                             conta. A Romasol já registrou casos de economia de até 95%, mas o
@@ -277,7 +277,7 @@ export function SolarCalculator() {
 function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <p className="text-[11px] uppercase tracking-wide text-slate-500">{label}</p>
+      <p className="text-[11px] uppercase tracking-wide text-slate-400">{label}</p>
       <p className="mt-1 font-display text-lg font-semibold text-offwhite-50">{value}</p>
     </div>
   );

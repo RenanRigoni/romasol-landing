@@ -33,7 +33,7 @@ export function Testimonials() {
                     {featured.name}
                     <span className="ml-2 font-normal text-slate-400">{featured.city}</span>
                   </p>
-                  <p className="text-[11px] uppercase tracking-[0.16em] text-slate-500">
+                  <p className="text-[11px] uppercase tracking-[0.16em] text-slate-400">
                     Avaliação publicada por cliente
                   </p>
                 </div>
@@ -57,7 +57,7 @@ export function Testimonials() {
                       {testimonial.name}
                       <span className="ml-2 font-normal text-slate-400">{testimonial.city}</span>
                     </p>
-                    <p className="text-[11px] uppercase tracking-[0.16em] text-slate-500">
+                    <p className="text-[11px] uppercase tracking-[0.16em] text-slate-400">
                       Avaliação publicada por cliente
                     </p>
                   </div>

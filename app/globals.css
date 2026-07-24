@@ -98,6 +98,23 @@ h4,
   border-color: var(--color-solar-500);
 }
 
+.skip-link {
+  position: fixed;
+  top: -3rem;
+  left: 1rem;
+  z-index: 100;
+  border-radius: 0.5rem;
+  background: var(--color-solar-500);
+  color: var(--color-navy-950);
+  padding: 0.75rem 1.25rem;
+  font-weight: 600;
+  transition: top 0.2s ease;
+}
+
+.skip-link:focus {
+  top: 1rem;
+}
+
 .scrollbar-none {
   scrollbar-width: none;
 }

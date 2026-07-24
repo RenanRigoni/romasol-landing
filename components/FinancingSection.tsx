@@ -31,7 +31,7 @@ export function FinancingSection() {
       if (!segmentRef.current || !numberRef.current) return;
 
       if (prefersReducedMotion()) {
-        segmentRef.current.style.width = `${SAVINGS_PERCENT}%`;
+        segmentRef.current.style.transform = `scaleX(${SAVINGS_PERCENT / 100})`;
         numberRef.current.textContent = currency(TOTAL_SAVINGS);
         return;
       }
@@ -68,7 +68,7 @@ export function FinancingSection() {
       });
 
       gsap.to(segmentRef.current, {
-        width: `${SAVINGS_PERCENT}%`,
+        scaleX: SAVINGS_PERCENT / 100,
         duration: 1.4,
         ease: "power3.out",
         scrollTrigger: {
@@ -119,7 +119,7 @@ export function FinancingSection() {
         </Reveal>
 
         <Reveal delay={0.1}>
-          <p className="mt-8 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+          <p className="mt-8 text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
             Exemplo ilustrativo · conta média de {currency(MONTHLY_BILL)}/mês
           </p>
         </Reveal>
@@ -184,8 +184,8 @@ export function FinancingSection() {
                 <div className="relative mt-1.5 h-5 w-full overflow-hidden bg-white/[0.04]">
                   <div
                     ref={segmentRef}
-                    className="absolute inset-y-0 left-0 bg-gradient-to-r from-solar-500/80 to-solar-400"
-                    style={{ width: 0 }}
+                    className="absolute inset-y-0 left-0 w-full origin-left bg-gradient-to-r from-solar-500/80 to-solar-400"
+                    style={{ transform: "scaleX(0)" }}
                   />
                 </div>
 
@@ -193,7 +193,7 @@ export function FinancingSection() {
                   <span>Custo remanescente · {currency(REMAINING_COST)}</span>
                   <span>Economia · {currency(TOTAL_SAVINGS)}</span>
                 </div>
-                <div className="mt-1 flex items-center justify-between text-[11px] uppercase tracking-wide text-slate-600">
+                <div className="mt-1 flex items-center justify-between text-[11px] uppercase tracking-wide text-slate-400">
                   <span>Mês 0</span>
                   <span>Mês {YEARS * 12}</span>
                 </div>
@@ -204,7 +204,7 @@ export function FinancingSection() {
 
         <Reveal delay={0.2}>
           <div className="mt-8 flex flex-col gap-6 border-t border-white/10 pt-6 sm:flex-row sm:items-end sm:justify-between">
-            <p className="max-w-lg text-xs leading-relaxed text-slate-500">
+            <p className="max-w-lg text-xs leading-relaxed text-slate-400">
               Comparativo meramente ilustrativo, sem considerar o valor do investimento inicial,
               taxas de financiamento ou variações tarifárias. Não representa uma proposta financeira.
             </p>

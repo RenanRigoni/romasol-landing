@@ -41,7 +41,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR" className={`${sora.variable} ${inter.variable} h-full antialiased`}>
-      <body className="min-h-full bg-navy-950">{children}</body>
+      <body className="min-h-full bg-navy-950">
+        <a href="#conteudo" className="skip-link">
+          Pular para o conteúdo
+        </a>
+        {children}
+      </body>
     </html>
   );
 }

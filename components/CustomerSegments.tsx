@@ -34,7 +34,7 @@ export function CustomerSegments() {
                     setProfile(segment.id);
                     trackEvent("customer_profile_selected", { profile: segment.id });
                   }}
-                  className={`rounded-full border px-5 py-2.5 text-sm font-semibold transition-colors ${
+                  className={`rounded-full border px-5 py-3 text-sm font-semibold transition-colors ${
                     activeId === segment.id
                       ? "border-solar-500 bg-solar-500 text-navy-950"
                       : "border-white/15 text-offwhite-50/85 hover:border-white/30"

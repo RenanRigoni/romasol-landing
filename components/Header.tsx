@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { Button } from "./ui/Button";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
@@ -18,6 +18,8 @@ const NAV_LINKS = [
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 24);
@@ -32,6 +34,38 @@ export function Header() {
     return () => {
       document.body.style.overflow = "";
     };
+  }, [isMenuOpen]);
+
+  useEffect(() => {
+    if (!isMenuOpen) return;
+
+    const menu = menuRef.current;
+    const focusable = menu?.querySelectorAll<HTMLElement>(
+      'a[href], button:not([disabled])',
+    );
+    focusable?.[0]?.focus();
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setIsMenuOpen(false);
+        menuButtonRef.current?.focus();
+        return;
+      }
+      if (event.key !== "Tab" || !focusable || focusable.length === 0) return;
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
   }, [isMenuOpen]);
 
   return (
@@ -50,7 +84,6 @@ export function Header() {
             width={140}
             height={94}
             className="h-10 w-auto sm:h-12"
-            priority
           />
         </a>
 
@@ -80,10 +113,12 @@ export function Header() {
         </div>
 
         <button
+          ref={menuButtonRef}
           type="button"
-          className="lg:hidden flex flex-col gap-1.5 p-2"
+          className="lg:hidden flex flex-col gap-1.5 p-3.5"
           aria-label={isMenuOpen ? "Fechar menu" : "Abrir menu"}
           aria-expanded={isMenuOpen}
+          aria-controls="mobile-menu"
           onClick={() => setIsMenuOpen((prev) => !prev)}
         >
           <span
@@ -105,7 +140,14 @@ export function Header() {
       </div>
 
       {isMenuOpen ? (
-        <div className="lg:hidden fixed inset-0 top-[64px] z-40 bg-navy-950 px-6 py-8 flex flex-col gap-6">
+        <div
+          ref={menuRef}
+          id="mobile-menu"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Menu de navegação"
+          className="lg:hidden fixed inset-0 top-[64px] z-40 bg-navy-950 px-6 py-8 flex flex-col gap-6"
+        >
           <nav className="flex flex-col gap-5" aria-label="Navegação móvel">
             {NAV_LINKS.map((link) => (
               <a

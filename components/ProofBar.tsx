@@ -22,5 +22,5 @@ function ProofItem({ accent, text }: { accent: string; text: string }) {
 }
 
 function Divider() {
-  return <span className="hidden text-slate-600 sm:inline">·</span>;
+  return <span className="hidden text-slate-400 sm:inline">·</span>;
 }

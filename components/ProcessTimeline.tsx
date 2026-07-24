@@ -124,7 +124,7 @@ export function ProcessTimeline() {
         },
         onUpdate: () => {
           if (lineRef.current) {
-            lineRef.current.style.height = `${progress.value * 100}%`;
+            lineRef.current.style.transform = `scaleY(${progress.value})`;
           }
           const nextIndex = Math.min(
             STEPS.length - 1,
@@ -147,7 +147,7 @@ export function ProcessTimeline() {
 
   useEffect(() => {
     if (!prefersReducedMotion() || !lineRef.current) return;
-    lineRef.current.style.height = `${((activeIndex + 1) / STEPS.length) * 100}%`;
+    lineRef.current.style.transform = `scaleY(${(activeIndex + 1) / STEPS.length})`;
   }, [activeIndex]);
 
   const activePhaseId = STEPS[activeIndex].phaseId;
@@ -171,7 +171,7 @@ export function ProcessTimeline() {
                 <span
                   key={phase.id}
                   className={`text-xs font-semibold uppercase tracking-[0.15em] transition-colors duration-500 ${
-                    index === activePhaseIndex ? "text-solar-400" : "text-slate-500"
+                    index === activePhaseIndex ? "text-solar-400" : "text-slate-400"
                   }`}
                 >
                   {phase.label}
@@ -191,8 +191,8 @@ export function ProcessTimeline() {
             <div className="absolute left-[19px] top-2 bottom-2 w-px bg-white/10" aria-hidden="true" />
             <div
               ref={lineRef}
-              className="absolute left-[19px] top-2 w-px origin-top bg-solar-500"
-              style={{ height: 0 }}
+              className="absolute left-[19px] top-2 bottom-2 w-px origin-top bg-solar-500"
+              style={{ transform: "scaleY(0)" }}
               aria-hidden="true"
             />
 
@@ -214,7 +214,7 @@ export function ProcessTimeline() {
                     style={{ opacity: isActive ? 1 : isPast ? 0.55 : 0.35 }}
                   >
                     {isFirstOfPhase ? (
-                      <p className="mb-3 text-xs font-semibold uppercase tracking-[0.15em] text-slate-500">
+                      <p className="mb-3 text-xs font-semibold uppercase tracking-[0.15em] text-slate-400">
                         {phase?.label}
                       </p>
                     ) : null}
@@ -226,7 +226,7 @@ export function ProcessTimeline() {
                             ? "border-solar-500 bg-solar-500 text-navy-950"
                             : isPast
                               ? "border-solar-500/50 text-solar-400"
-                              : "border-white/15 text-slate-500"
+                              : "border-white/15 text-slate-400"
                         }`}
                       >
                         {String(step.number).padStart(2, "0")}

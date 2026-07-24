@@ -20,7 +20,7 @@ export default function Home() {
   return (
     <AppStateProvider>
       <Header />
-      <main>
+      <main id="conteudo" tabIndex={-1}>
         <Hero />
         <ProofBar />
         <CustomerSegments />
