@@ -5,7 +5,7 @@ import Image from "next/image";
 import { Button } from "./ui/Button";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { trackEvent } from "@/lib/analytics";
-import { BASE_PATH } from "@/lib/basePath";
+import { BASE_PATH, withBasePath } from "@/lib/basePath";
 
 const NAV_LINKS = [
   { href: `${BASE_PATH}/#projetos`, label: "Projetos" },
@@ -43,9 +43,9 @@ export function Header() {
       }`}
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6">
-        <a href="#topo" className="flex items-center gap-2" aria-label="Romasol — página inicial">
+        <a href={`${BASE_PATH}/#topo`} className="flex items-center gap-2" aria-label="Romasol — página inicial">
           <Image
-            src="/brand/logo-romasol.png"
+            src={withBasePath("/brand/logo-romasol.png")}
             alt="Romasol Engenharia e Energia Solar"
             width={140}
             height={94}

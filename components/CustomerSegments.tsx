@@ -6,6 +6,7 @@ import { SectionHeading } from "./ui/SectionHeading";
 import { Reveal } from "./ui/Reveal";
 import { trackEvent } from "@/lib/analytics";
 import { useAppState } from "./AppStateProvider";
+import { withBasePath } from "@/lib/basePath";
 
 export function CustomerSegments() {
   const { profile, setProfile } = useAppState();
@@ -61,7 +62,7 @@ export function CustomerSegments() {
             <div className="relative overflow-hidden rounded-3xl border border-white/10">
               <Image
                 key={active.image}
-                src={active.image}
+                src={withBasePath(active.image)}
                 alt={`Energia solar para o perfil ${active.label} (imagem ilustrativa)`}
                 width={800}
                 height={800}

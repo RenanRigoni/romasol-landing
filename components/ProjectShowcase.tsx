@@ -9,6 +9,7 @@ import { SectionHeading } from "./ui/SectionHeading";
 import { Reveal } from "./ui/Reveal";
 import { trackEvent } from "@/lib/analytics";
 import { ensureGsapRegistered, prefersReducedMotion, useReducedMotion } from "@/lib/gsap";
+import { withBasePath } from "@/lib/basePath";
 
 export function ProjectShowcase() {
   const rootRef = useRef<HTMLElement>(null);
@@ -81,7 +82,7 @@ export function ProjectShowcase() {
                 >
                   <div className="relative aspect-square w-full overflow-hidden">
                     <Image
-                      src={project.image}
+                      src={withBasePath(project.image)}
                       alt={`Instalação fotovoltaica real — ${project.name}`}
                       width={600}
                       height={600}
@@ -125,7 +126,7 @@ export function ProjectShowcase() {
                 >
                   <div className="relative aspect-square w-full">
                     <Image
-                      src={project.image}
+                      src={withBasePath(project.image)}
                       alt={`Instalação fotovoltaica real — ${project.name}`}
                       width={260}
                       height={260}

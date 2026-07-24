@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import Image from "next/image";
 import { useGSAP } from "@gsap/react";
 import { ensureGsapRegistered, prefersReducedMotion, useReducedMotion } from "@/lib/gsap";
+import { withBasePath } from "@/lib/basePath";
 
 const STAGES = [
   {
@@ -187,7 +188,7 @@ export function HybridEnergyScroll() {
 
           <div className="relative aspect-[4/5] w-full overflow-hidden rounded-3xl border border-white/10 lg:aspect-auto lg:h-[70vh]">
             <Image
-              src="/stock/hibrido.jpg"
+              src={withBasePath("/stock/hibrido.jpg")}
               alt="Painéis solares em telhado industrial ao entardecer, representando geração e gestão inteligente de energia"
               fill
               sizes="(min-width: 1024px) 50vw, 100vw"

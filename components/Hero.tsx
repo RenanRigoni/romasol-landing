@@ -7,6 +7,7 @@ import { Button } from "./ui/Button";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { trackEvent } from "@/lib/analytics";
 import { ensureGsapRegistered, prefersReducedMotion } from "@/lib/gsap";
+import { withBasePath } from "@/lib/basePath";
 
 export function Hero() {
   const rootRef = useRef<HTMLElement>(null);
@@ -81,7 +82,7 @@ export function Hero() {
     >
       <div ref={imageRef} className="absolute inset-0">
         <Image
-          src="/cases/gaia.png"
+          src={withBasePath("/cases/gaia.png")}
           alt="Instalação fotovoltaica real da Romasol — telhado da Gráfica Gaia visto do alto"
           fill
           priority

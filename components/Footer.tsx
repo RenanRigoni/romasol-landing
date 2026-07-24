@@ -6,7 +6,7 @@ import { Button } from "./ui/Button";
 import { WHATSAPP_DISPLAY_NUMBER, buildWhatsAppUrl } from "@/lib/whatsapp";
 import { REGIONS } from "@/lib/cities";
 import { useAppState } from "./AppStateProvider";
-import { BASE_PATH } from "@/lib/basePath";
+import { BASE_PATH, withBasePath } from "@/lib/basePath";
 
 const NAV_LINKS = [
   { href: `${BASE_PATH}/#projetos`, label: "Projetos" },
@@ -55,7 +55,7 @@ export function Footer() {
           <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-[1.3fr_1fr_1fr_1.1fr] lg:gap-10">
             <div className="flex flex-col gap-5">
               <Image
-                src="/brand/logo-romasol.png"
+                src={withBasePath("/brand/logo-romasol.png")}
                 alt="Romasol Engenharia e Energia Solar"
                 width={1024}
                 height={684}

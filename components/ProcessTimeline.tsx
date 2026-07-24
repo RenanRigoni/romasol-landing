@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useGSAP } from "@gsap/react";
 import { ensureGsapRegistered, prefersReducedMotion } from "@/lib/gsap";
+import { withBasePath } from "@/lib/basePath";
 
 interface Step {
   number: number;
@@ -328,7 +329,7 @@ function PanelExecucao() {
   return (
     <div className="relative h-full w-full bg-navy-950">
       <Image
-        src="/cases/butiquim.png"
+        src={withBasePath("/cases/butiquim.png")}
         alt="Instalação fotovoltaica real da Romasol em telhado comercial"
         fill
         sizes="(min-width: 1024px) 33vw, 90vw"
