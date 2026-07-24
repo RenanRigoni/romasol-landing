@@ -19,10 +19,10 @@ export function SolarCalculator() {
   const { profile, city, setCity, monthlyBill, setMonthlyBill, setEstimate } = useAppState();
   const [rawInput, setRawInput] = useState(monthlyBill ? String(monthlyBill) : "");
   const [hasStarted, setHasStarted] = useState(false);
+  const [isExplainOpen, setIsExplainOpen] = useState(false);
   const resultRef = useRef<HTMLDivElement>(null);
-  const monthlyValueRef = useRef<HTMLSpanElement>(null);
+  const flowLineRef = useRef<HTMLDivElement>(null);
   const annualValueRef = useRef<HTMLSpanElement>(null);
-  const fourYearValueRef = useRef<HTMLSpanElement>(null);
   const hasRevealedRef = useRef(false);
 
   const parsedBill = useMemo(() => {
@@ -44,46 +44,40 @@ export function SolarCalculator() {
     () => {
       if (!result) {
         hasRevealedRef.current = false;
+        if (flowLineRef.current) flowLineRef.current.style.width = "0%";
         return;
       }
-
-      const setText = (ref: React.RefObject<HTMLSpanElement | null>, value: number) => {
-        if (ref.current) ref.current.textContent = formatCurrencyBRL(value);
-      };
 
       const isFirstReveal = !hasRevealedRef.current;
       hasRevealedRef.current = true;
 
       if (isFirstReveal && !prefersReducedMotion()) {
         const gsap = ensureGsapRegistered();
-        const rows = resultRef.current?.querySelectorAll("[data-result-row]");
-        if (rows?.length) {
+
+        if (flowLineRef.current) {
           gsap.fromTo(
-            rows,
-            { opacity: 0, y: 12 },
-            { opacity: 1, y: 0, duration: 0.45, stagger: 0.08, ease: "power2.out" },
+            flowLineRef.current,
+            { width: "0%" },
+            { width: "100%", duration: 1.1, ease: "power2.out" },
           );
         }
 
-        const counters: Array<[React.RefObject<HTMLSpanElement | null>, number]> = [
-          [monthlyValueRef, result.monthlySavings],
-          [annualValueRef, result.annualSavings],
-          [fourYearValueRef, result.fourYearSavings],
-        ];
-
-        counters.forEach(([ref, target]) => {
-          const counter = { value: 0 };
-          gsap.to(counter, {
-            value: target,
-            duration: 1.1,
-            ease: "power2.out",
-            onUpdate: () => setText(ref, Math.round(counter.value)),
-          });
+        const counter = { value: 0 };
+        gsap.to(counter, {
+          value: result.annualSavings,
+          duration: 1.1,
+          ease: "power2.out",
+          onUpdate: () => {
+            if (annualValueRef.current) {
+              annualValueRef.current.textContent = formatCurrencyBRL(Math.round(counter.value));
+            }
+          },
         });
       } else {
-        setText(monthlyValueRef, result.monthlySavings);
-        setText(annualValueRef, result.annualSavings);
-        setText(fourYearValueRef, result.fourYearSavings);
+        if (flowLineRef.current) flowLineRef.current.style.width = "100%";
+        if (annualValueRef.current) {
+          annualValueRef.current.textContent = formatCurrencyBRL(result.annualSavings);
+        }
       }
     },
     { dependencies: [result], scope: resultRef },
@@ -114,19 +108,38 @@ export function SolarCalculator() {
         </Reveal>
 
         <Reveal delay={0.1}>
-          <div className="mt-10 grid grid-cols-1 gap-8 rounded-3xl border border-white/10 bg-white/[0.03] p-6 sm:p-10 lg:grid-cols-2">
-            <div className="flex flex-col gap-6">
-              <div>
+          <div className="mt-10 overflow-hidden rounded-2xl border border-white/10">
+            <div className="grid grid-cols-1 lg:grid-cols-2 lg:divide-x lg:divide-white/10">
+              <div className="p-6 sm:p-10">
                 <label htmlFor="monthly-bill" className="text-sm font-semibold text-offwhite-50">
-                  Conta média mensal (R$)
+                  Conta média mensal
                 </label>
-                <div className="mt-3 flex flex-wrap gap-2">
+                <div className="mt-3 flex items-baseline gap-2 border-b-2 border-white/15 pb-2 transition-colors focus-within:border-solar-500">
+                  <span className="font-display text-3xl font-semibold text-slate-500 sm:text-4xl">
+                    R$
+                  </span>
+                  <input
+                    id="monthly-bill"
+                    type="text"
+                    inputMode="decimal"
+                    placeholder="600"
+                    value={rawInput}
+                    onChange={(event) => handleInputChange(event.target.value)}
+                    className="w-full bg-transparent font-display text-3xl font-semibold text-offwhite-50 outline-none placeholder:text-slate-700 sm:text-4xl"
+                    aria-describedby="monthly-bill-hint"
+                  />
+                </div>
+                <p id="monthly-bill-hint" className="mt-2 text-xs text-slate-500">
+                  Valor usado diretamente na fórmula de estimativa.
+                </p>
+
+                <div className="mt-5 flex flex-wrap gap-2">
                   {QUICK_AMOUNTS.map((amount) => (
                     <button
                       key={amount}
                       type="button"
                       onClick={() => handleQuickAmount(amount)}
-                      className={`rounded-full border px-4 py-2 text-sm font-semibold transition-colors ${
+                      className={`rounded-full border px-4 py-1.5 text-xs font-semibold transition-colors ${
                         Number(rawInput) === amount
                           ? "border-solar-500 bg-solar-500 text-navy-950"
                           : "border-white/15 text-offwhite-50/85 hover:border-white/30"
@@ -136,124 +149,150 @@ export function SolarCalculator() {
                     </button>
                   ))}
                 </div>
-                <input
-                  id="monthly-bill"
-                  type="text"
-                  inputMode="decimal"
-                  placeholder="Outro valor, ex: 750"
-                  value={rawInput}
-                  onChange={(event) => handleInputChange(event.target.value)}
-                  className="mt-4 w-full rounded-xl border border-white/15 bg-navy-950 px-4 py-3.5 text-lg text-offwhite-50 outline-none transition-colors focus:border-solar-500"
-                  aria-describedby="monthly-bill-hint"
-                />
-                <p id="monthly-bill-hint" className="mt-2 text-xs text-slate-400">
-                  Valor usado diretamente na fórmula de estimativa.
-                </p>
-              </div>
 
-              <div className="border-t border-white/10 pt-6">
-                <label htmlFor="city-select" className="text-sm font-semibold text-offwhite-50">
-                  Cidade (opcional, apenas para contato)
-                </label>
-                <select
-                  id="city-select"
-                  value={city ?? ""}
-                  onChange={(event) => setCity(event.target.value || undefined)}
-                  className="mt-3 w-full rounded-xl border border-white/15 bg-navy-950 px-4 py-3 text-offwhite-50 outline-none focus:border-solar-500"
-                >
-                  <option value="">Selecione sua cidade</option>
-                  {ALL_CITIES.map((cityName) => (
-                    <option key={cityName} value={cityName}>
-                      {cityName}
-                    </option>
-                  ))}
-                </select>
-                <p className="mt-2 text-xs text-slate-400">
-                  Não altera o cálculo, apenas ajuda a personalizar o atendimento.
-                </p>
-              </div>
-            </div>
-
-            <div
-              ref={resultRef}
-              className="flex flex-col justify-between rounded-2xl border border-white/10 bg-navy-950 p-6"
-            >
-              {result ? (
-                <div className="flex flex-col gap-5">
-                  <ResultRow label="Consumo estimado" value={formatKwh(result.monthlyConsumptionKwh)} suffix="/mês" />
-                  <ResultRow label="Potência necessária" value={formatKwp(result.requiredPowerKwp)} />
-                  <ResultRow label="Painéis estimados" value={`${formatInteger(result.estimatedPanelCount)} painéis`} />
-                  <ResultRow label="Potência instalada" value={formatKwp(result.installedPowerKwp)} />
-                  <div className="my-1 border-t border-white/10" />
-                  <ResultRow label="Economia mensal" valueRef={monthlyValueRef} highlight />
-                  <ResultRow label="Economia anual" valueRef={annualValueRef} highlight />
-                  <ResultRow label="Economia em 4 anos" valueRef={fourYearValueRef} highlight />
-
-                  <Button
-                    href={whatsappHref}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    variant="primary"
-                    className="mt-2 w-full"
-                    onClick={() => {
-                      trackEvent("calculator_completed", { monthlyBill: parsedBill });
-                      trackEvent("calculator_lead_click");
-                    }}
+                <div className="mt-8 border-t border-white/10 pt-6">
+                  <label htmlFor="city-select" className="text-sm font-semibold text-offwhite-50">
+                    Cidade (opcional, apenas para contato)
+                  </label>
+                  <select
+                    id="city-select"
+                    value={city ?? ""}
+                    onChange={(event) => setCity(event.target.value || undefined)}
+                    className="mt-3 w-full rounded-lg border border-white/15 bg-transparent px-4 py-3 text-offwhite-50 outline-none focus:border-solar-500"
                   >
-                    Receber uma análise personalizada
-                  </Button>
-
-                  <p className="text-xs leading-relaxed text-slate-400">
-                    Estimativa com fator de economia conservador de 90% sobre o valor da conta.
-                    A Romasol já registrou casos de economia de até 95%, mas o percentual real
-                    depende da análise técnica do seu imóvel.
+                    <option value="">Selecione sua cidade</option>
+                    {ALL_CITIES.map((cityName) => (
+                      <option key={cityName} value={cityName} className="bg-navy-950">
+                        {cityName}
+                      </option>
+                    ))}
+                  </select>
+                  <p className="mt-2 text-xs text-slate-500">
+                    Não altera o cálculo, apenas ajuda a personalizar o atendimento.
                   </p>
                 </div>
-              ) : (
-                <div className="flex h-full flex-col items-center justify-center gap-3 py-12 text-center text-slate-400">
-                  <p>Informe o valor da sua conta para ver a simulação.</p>
+              </div>
+
+              <div ref={resultRef} className="relative overflow-hidden bg-navy-950 p-6 sm:p-10">
+                <TechnicalGrid />
+
+                <div className="relative">
+                  <div className="flex items-center justify-between gap-2 text-[9px] font-semibold uppercase tracking-[0.08em] sm:text-[10px] sm:tracking-[0.15em]">
+                    <span className={`whitespace-nowrap ${result ? "text-solar-400" : "text-slate-600"}`}>
+                      Conta atual
+                    </span>
+                    <span className={`whitespace-nowrap ${result ? "text-solar-400" : "text-slate-600"}`}>
+                      Sistema estimado
+                    </span>
+                    <span className={`whitespace-nowrap ${result ? "text-solar-400" : "text-slate-600"}`}>
+                      Economia
+                    </span>
+                  </div>
+                  <div className="relative mt-2.5 h-px bg-white/10">
+                    <div
+                      ref={flowLineRef}
+                      className="absolute inset-y-0 left-0 bg-solar-500"
+                      style={{ width: "0%" }}
+                    />
+                  </div>
+
+                  <div className="mt-8 grid grid-cols-2 gap-x-6 gap-y-5">
+                    <Stat label="Consumo mensal" value={result ? formatKwh(result.monthlyConsumptionKwh) : "—"} />
+                    <Stat label="Potência necessária" value={result ? formatKwp(result.requiredPowerKwp) : "—"} />
+                    <Stat
+                      label="Painéis estimados"
+                      value={result ? `${formatInteger(result.estimatedPanelCount)} painéis` : "—"}
+                    />
+                    <Stat label="Potência instalada" value={result ? formatKwp(result.installedPowerKwp) : "—"} />
+                  </div>
+
+                  <div className="mt-8 border-t border-white/10 pt-8">
+                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-solar-500">
+                      Economia estimada por ano
+                    </p>
+                    <p
+                      className={`mt-3 font-display text-4xl font-bold leading-none sm:text-5xl ${
+                        result ? "text-solar-400" : "text-slate-700"
+                      }`}
+                    >
+                      <span ref={annualValueRef}>{result ? formatCurrencyBRL(0) : "—"}</span>
+                    </p>
+                    <p className="mt-3 text-sm text-slate-400">
+                      {result
+                        ? `${formatCurrencyBRL(result.monthlySavings)}/mês · ${formatCurrencyBRL(result.fourYearSavings)} em 4 anos`
+                        : "Informe sua conta ao lado para calcular"}
+                    </p>
+                  </div>
+
+                  {result ? (
+                    <div className="mt-6 flex flex-col gap-4">
+                      <Button
+                        href={whatsappHref}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        variant="primary"
+                        className="w-full"
+                        onClick={() => {
+                          trackEvent("calculator_completed", { monthlyBill: parsedBill });
+                          trackEvent("calculator_lead_click");
+                        }}
+                      >
+                        Receber uma análise personalizada
+                      </Button>
+
+                      <div>
+                        <p className="text-xs leading-relaxed text-slate-500">
+                          Estimativa inicial. O dimensionamento definitivo depende de análise técnica.
+                        </p>
+                        <button
+                          type="button"
+                          onClick={() => setIsExplainOpen((prev) => !prev)}
+                          className="mt-2 text-xs font-semibold text-slate-400 underline decoration-white/20 underline-offset-4 transition-colors hover:text-solar-400"
+                        >
+                          {isExplainOpen ? "Ocultar detalhes do cálculo" : "Entenda o cálculo"}
+                        </button>
+                        {isExplainOpen ? (
+                          <p className="mt-3 text-xs leading-relaxed text-slate-500">
+                            Estimativa baseada na tarifa média de energia e no potencial regional de
+                            geração solar, com fator de economia conservador de 90% sobre o valor da
+                            conta. A Romasol já registrou casos de economia de até 95%, mas o
+                            dimensionamento definitivo depende da análise da fatura, localização,
+                            irradiação, orientação do telhado, sombreamento, estrutura elétrica e
+                            condições técnicas do imóvel.
+                          </p>
+                        ) : null}
+                      </div>
+                    </div>
+                  ) : null}
                 </div>
-              )}
+              </div>
             </div>
           </div>
         </Reveal>
-
-        <p className="mx-auto mt-8 max-w-3xl text-center text-xs leading-relaxed text-slate-400">
-          Esta é uma estimativa inicial baseada na tarifa média de energia e no potencial regional
-          de geração solar. O dimensionamento definitivo depende da análise da fatura, localização,
-          irradiação, orientação do telhado, sombreamento, estrutura elétrica e condições técnicas
-          do imóvel.
-        </p>
       </div>
     </section>
   );
 }
 
-function ResultRow({
-  label,
-  value,
-  valueRef,
-  suffix,
-  highlight,
-}: {
-  label: string;
-  value?: string;
-  valueRef?: React.RefObject<HTMLSpanElement | null>;
-  suffix?: string;
-  highlight?: boolean;
-}) {
+function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div data-result-row className="flex items-baseline justify-between gap-4">
-      <span className="text-sm text-slate-300">{label}</span>
-      <span
-        ref={valueRef}
-        className={`font-display text-lg font-semibold ${
-          highlight ? "text-solar-400" : "text-offwhite-50"
-        }`}
-      >
-        {value}
-        {suffix ? <span className="text-xs text-slate-400">{suffix}</span> : null}
-      </span>
+    <div>
+      <p className="text-[11px] uppercase tracking-wide text-slate-500">{label}</p>
+      <p className="mt-1 font-display text-lg font-semibold text-offwhite-50">{value}</p>
     </div>
+  );
+}
+
+function TechnicalGrid() {
+  return (
+    <div
+      className="pointer-events-none absolute inset-0 opacity-[0.05]"
+      style={{
+        backgroundImage:
+          "linear-gradient(rgba(92,130,255,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(92,130,255,0.6) 1px, transparent 1px)",
+        backgroundSize: "24px 24px",
+      }}
+      aria-hidden="true"
+    />
   );
 }

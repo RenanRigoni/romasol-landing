@@ -29,10 +29,12 @@ const STAGES = [
   },
 ];
 
-function StageDiagram({ stageIndex }: { stageIndex: number }) {
+function StageDiagram({ stageIndex, size = 56 }: { stageIndex: number; size?: number }) {
+  const style = { width: size, height: size };
+
   if (stageIndex === 0) {
     return (
-      <svg viewBox="0 0 64 64" className="h-14 w-14" fill="none" aria-hidden="true">
+      <svg viewBox="0 0 64 64" style={style} fill="none" aria-hidden="true">
         <circle cx="32" cy="20" r="7" stroke="#F5B301" strokeWidth="1.5" />
         <path d="M32 6v4M32 30v4M18 20h4M46 20h4M22 10l3 3M42 10l-3 3" stroke="#F5B301" strokeWidth="1.5" />
         <path d="M8 52 L26 52 L30 44 L38 44 L42 52 L56 52" stroke="#5c82ff" strokeWidth="1.2" strokeDasharray="3 4" />
@@ -41,7 +43,7 @@ function StageDiagram({ stageIndex }: { stageIndex: number }) {
   }
   if (stageIndex === 1) {
     return (
-      <svg viewBox="0 0 64 64" className="h-14 w-14" fill="none" aria-hidden="true">
+      <svg viewBox="0 0 64 64" style={style} fill="none" aria-hidden="true">
         <rect x="16" y="16" width="28" height="36" rx="2" stroke="#5c82ff" strokeWidth="1.5" />
         <rect x="25" y="11" width="10" height="5" rx="1" fill="#5c82ff" />
         <rect x="20" y="40" width="20" height="8" fill="#F5B301" opacity="0.85" />
@@ -52,7 +54,7 @@ function StageDiagram({ stageIndex }: { stageIndex: number }) {
   }
   if (stageIndex === 2) {
     return (
-      <svg viewBox="0 0 64 64" className="h-14 w-14" fill="none" aria-hidden="true">
+      <svg viewBox="0 0 64 64" style={style} fill="none" aria-hidden="true">
         <circle cx="14" cy="16" r="5" stroke="#F5B301" strokeWidth="1.4" />
         <circle cx="14" cy="48" r="5" stroke="#5c82ff" strokeWidth="1.4" />
         <circle cx="50" cy="32" r="6" stroke="#F5B301" strokeWidth="1.4" />
@@ -61,7 +63,7 @@ function StageDiagram({ stageIndex }: { stageIndex: number }) {
     );
   }
   return (
-    <svg viewBox="0 0 64 64" className="h-14 w-14" fill="none" aria-hidden="true">
+    <svg viewBox="0 0 64 64" style={style} fill="none" aria-hidden="true">
       <circle cx="10" cy="32" r="3.5" fill="#F5B301" />
       <path d="M13 32 L28 32" stroke="#F5B301" strokeWidth="1.5" />
       <path d="M28 32 L46 14" stroke="#5c82ff" strokeWidth="1.2" strokeDasharray="2 4" opacity="0.5" />
@@ -86,10 +88,6 @@ export function HybridEnergyScroll() {
 
       mm.add("(min-width: 1024px)", () => {
         const panels = gsap.utils.toArray<HTMLElement>("[data-stage-panel]");
-        const overlays = gsap.utils.toArray<HTMLElement>("[data-stage-overlay]");
-
-        gsap.set(overlays, { opacity: 0 });
-        gsap.set(overlays[0], { opacity: 1 });
 
         const tl = gsap.timeline({
           scrollTrigger: {
@@ -108,6 +106,8 @@ export function HybridEnergyScroll() {
           },
         });
 
+        const icons = gsap.utils.toArray<HTMLElement>("[data-stage-icon]");
+
         panels.forEach((panel, index) => {
           if (index === 0) return;
           tl.fromTo(
@@ -118,11 +118,12 @@ export function HybridEnergyScroll() {
           ).to(panels[index - 1], { autoAlpha: 0, y: -16, duration: 0.4 }, index - 0.1);
         });
 
-        overlays.forEach((overlay, index) => {
+        icons.forEach((icon, index) => {
           if (index === 0) return;
-          tl.to(overlays[index - 1], { opacity: 0, duration: 0.4 }, index - 0.1).to(
-            overlay,
-            { opacity: 1, duration: 0.4 },
+          tl.to(icons[index - 1], { autoAlpha: 0, duration: 0.3 }, index - 0.1).fromTo(
+            icon,
+            { autoAlpha: 0 },
+            { autoAlpha: 1, duration: 0.3 },
             index - 0.1,
           );
         });
@@ -184,6 +185,24 @@ export function HybridEnergyScroll() {
                 />
               ))}
             </div>
+
+            <div className="relative mt-5 h-14">
+              {STAGES.map((stage, index) => (
+                <div
+                  key={stage.label}
+                  data-stage-icon
+                  className="absolute inset-0 flex items-center gap-3"
+                  style={{ opacity: index === 0 ? 1 : 0 }}
+                >
+                  <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/[0.03]">
+                    <StageDiagram stageIndex={index} size={36} />
+                  </div>
+                  <span className="text-sm font-semibold uppercase tracking-[0.15em] text-solar-400">
+                    Etapa atual · {stage.label}
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
 
           <div className="relative aspect-[4/5] w-full overflow-hidden rounded-3xl border border-white/10 lg:aspect-auto lg:h-[70vh]">
@@ -195,21 +214,10 @@ export function HybridEnergyScroll() {
               className="object-cover"
               style={{ objectPosition: "30% 55%" }}
             />
-            {STAGES.map((stage, index) => (
-              <div
-                key={stage.label}
-                data-stage-overlay
-                className="absolute inset-0 flex items-end justify-between bg-gradient-to-t from-navy-950/85 via-navy-950/10 to-transparent p-6"
-                style={{ opacity: index === 0 ? 1 : 0 }}
-              >
-                <span className="rounded-full border border-solar-500/40 bg-navy-950/70 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-solar-400">
-                  {stage.label}
-                </span>
-                <div className="rounded-xl border border-white/10 bg-navy-950/70 p-2">
-                  <StageDiagram stageIndex={index} />
-                </div>
-              </div>
-            ))}
+            <div
+              className="absolute inset-0 bg-gradient-to-t from-navy-950/70 via-navy-950/5 to-transparent"
+              aria-hidden="true"
+            />
           </div>
 
           <div className={`flex flex-col gap-6 ${reducedMotion ? "" : "lg:hidden"}`}>

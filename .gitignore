@@ -38,6 +38,7 @@ yarn-error.log*
 
 # research/reference material (not part of the shipped site)
 /INSTA_ROMASOL/
+/FOTOS DO SITE ATUAL/
 
 # typescript
 *.tsbuildinfo
