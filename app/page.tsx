@@ -12,6 +12,7 @@ import { FinancingSection } from "@/components/FinancingSection";
 import { Testimonials } from "@/components/Testimonials";
 import { FAQ } from "@/components/FAQ";
 import { FinalCTA } from "@/components/FinalCTA";
+import { TrustPartners } from "@/components/TrustPartners";
 import { Footer } from "@/components/Footer";
 import { WhatsAppFloatingButton } from "@/components/WhatsAppFloatingButton";
 
@@ -32,6 +33,7 @@ export default function Home() {
         <Testimonials />
         <FAQ />
         <FinalCTA />
+        <TrustPartners />
       </main>
       <Footer />
       <WhatsAppFloatingButton />

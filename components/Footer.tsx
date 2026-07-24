@@ -25,7 +25,7 @@ export function Footer() {
   const ctaHref = buildWhatsAppUrl({ profile, city, monthlyBill, estimate });
 
   return (
-    <footer className="bg-navy-950">
+    <footer className="bg-navy-900/60">
       <div className="border-b border-white/10 py-16">
         <div className="mx-auto max-w-7xl px-6">
           <div className="flex flex-col items-start gap-8 lg:flex-row lg:items-center lg:justify-between">
