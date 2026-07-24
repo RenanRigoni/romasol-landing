@@ -27,16 +27,18 @@ export function ProjectShowcase() {
         const track = trackRef.current;
         if (!track) return;
 
-        const leftInset = track.getBoundingClientRect().left;
-        const scrollDistance = track.scrollWidth - window.innerWidth + leftInset * 2;
+        const getScrollDistance = () => {
+          const leftInset = track.getBoundingClientRect().left;
+          return track.scrollWidth - window.innerWidth + leftInset * 2;
+        };
 
         const tween = gsap.to(track, {
-          x: -scrollDistance,
+          x: () => -getScrollDistance(),
           ease: "none",
           scrollTrigger: {
             trigger: rootRef.current,
             start: "top top",
-            end: () => `+=${scrollDistance}`,
+            end: () => `+=${getScrollDistance()}`,
             scrub: 0.6,
             pin: true,
             invalidateOnRefresh: true,
