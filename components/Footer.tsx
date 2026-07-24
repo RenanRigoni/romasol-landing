@@ -59,7 +59,7 @@ export function Footer() {
                 alt="Romasol Engenharia e Energia Solar"
                 width={1024}
                 height={684}
-                className="h-16 w-auto"
+                className="h-16 w-auto self-start"
               />
               <p className="max-w-xs text-base leading-relaxed text-slate-300">
                 Engenharia e energia solar para residências, empresas, indústrias e propriedades
