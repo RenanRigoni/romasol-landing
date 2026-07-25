@@ -117,7 +117,8 @@ export function Hero() {
           data-hero-line
           className="font-display text-4xl font-semibold leading-[1.08] tracking-tight text-offwhite-50 sm:text-5xl md:text-6xl lg:text-[4.25rem]"
         >
-          Gere energia.{" "}
+          Gere energia.
+          <br />
           <span className="text-solar-400">Construa patrimônio.</span>
         </h1>
 
